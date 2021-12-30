@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class GraphQLDataFetchers {
@@ -57,6 +59,16 @@ public class GraphQLDataFetchers {
                     .filter(author -> author.get("id").equals(authorId))
                     .findFirst()
                     .orElse(null);
+        };
+    }
+
+    public DataFetcher getBooksByIdsDataFetcher(){
+        return dataFetchingEnvironment -> {
+            List<String> bookIds = dataFetchingEnvironment.getArgument("ids");
+            return books
+                    .stream()
+                    .filter(book -> bookIds.contains(book.get("id")))
+                    .collect(Collectors.toList());
         };
     }
 }
